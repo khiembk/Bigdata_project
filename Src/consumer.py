@@ -9,7 +9,7 @@ spark = SparkSession.builder \
 # Read from Kafka
 kafka_df = spark.readStream \
     .format("kafka") \
-    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("kafka.bootstrap.servers", "kafka:9092") \
     .option("subscribe", "test-topic") \
     .load()
 
@@ -20,7 +20,7 @@ messages_df = kafka_df.selectExpr("CAST(value AS STRING) as message")
 query = messages_df.writeStream \
     .outputMode("append") \
     .format("text") \
-    .option("path", "hdfs://localhost:9000/kafka_output") \
+    .option("path", "hdfs://namenode:9000/kafka_output") \
     .option("checkpointLocation", "/tmp/spark_checkpoint") \
     .start()
 

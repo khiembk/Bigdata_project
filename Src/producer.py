@@ -3,7 +3,7 @@ import socket
 
 # Define Kafka producer configurations
 conf = {
-    'bootstrap.servers': "localhost:9092",  # Adjust this to your Kafka broker
+    'bootstrap.servers': "localhost:9094",  # Adjust this to your Kafka broker
     'client.id': socket.gethostname()
 }
 

@@ -1,4 +1,4 @@
-FROM bde2020/spark-worker:3.1.2-hadoop3.2
+FROM bde2020/spark-worker:3.0.0-hadoop3.2
 
 # Install build dependencies, Python dev headers, and Fortran compiler
 RUN apk add --no-cache \
