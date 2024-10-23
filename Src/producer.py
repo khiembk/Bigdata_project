@@ -41,6 +41,61 @@ data = [
         "Volume": 34200000,
         "Dividends": 0.0,
         "Stock Splits": 0.0
+    },
+    {
+        "Ticker": "MSFT",
+        "Date": "2024-10-22",
+        "Open": 320.14,
+        "High": 322.45,
+        "Low": 319.12,
+        "Close": 321.78,
+        "Volume": 34200000,
+        "Dividends": 0.0,
+        "Stock Splits": 0.0
+    },
+    {
+        "Ticker": "MSFT",
+        "Date": "2024-10-22",
+        "Open": 320.14,
+        "High": 322.45,
+        "Low": 319.12,
+        "Close": 321.78,
+        "Volume": 34200000,
+        "Dividends": 0.0,
+        "Stock Splits": 0.0
+    },
+    {
+        "Ticker": "MSFT",
+        "Date": "2024-10-22",
+        "Open": 320.14,
+        "High": 322.45,
+        "Low": 319.12,
+        "Close": 321.78,
+        "Volume": 34200000,
+        "Dividends": 0.0,
+        "Stock Splits": 0.0
+    },
+    {
+        "Ticker": "MSFT",
+        "Date": "2024-10-22",
+        "Open": 320.14,
+        "High": 322.45,
+        "Low": 319.12,
+        "Close": 321.78,
+        "Volume": 34200000,
+        "Dividends": 0.0,
+        "Stock Splits": 0.0
+    },
+    {
+        "Ticker": "MSFT",
+        "Date": "2024-10-22",
+        "Open": 320.14,
+        "High": 322.45,
+        "Low": 319.12,
+        "Close": 321.78,
+        "Volume": 34200000,
+        "Dividends": 0.0,
+        "Stock Splits": 0.0
     }
 ]
 

@@ -1,11 +1,11 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType, DateType
+from pyspark.sql.functions import from_json, col, to_date
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 
 # Define the schema for your JSON data
 json_schema = StructType([
     StructField("Ticker", StringType(), True),
-    StructField("Date", DateType(), True),
+    StructField("Date", StringType(), True),
     StructField("Open", DoubleType(), True),
     StructField("High", DoubleType(), True),
     StructField("Low", DoubleType(), True),
@@ -28,18 +28,11 @@ kafka_df = spark.readStream \
     .option("subscribe", "test-topic") \
     .load()
 
-# Convert the Kafka message value from binary to string and parse JSON
-messages_df = kafka_df.selectExpr("CAST(value AS STRING) as json") \
-    .select(from_json(col("json"), json_schema).alias("data")) \
-    .select("data.*")  # Select fields from the parsed JSON
-
 # Write the messages to HDFS in text format
-query = messages_df.writeStream \
+query = kafka_df.selectExpr("CAST(value AS STRING)").writeStream \
     .outputMode("append") \
-    .format("parquet") \
+    .format("text") \
     .option("path", "hdfs://namenode:9000/kafka_output") \
     .option("checkpointLocation", "/tmp/spark_checkpoint") \
-    .start()
-
-# Await termination of the stream
-query.awaitTermination()
+    .start() \
+    .awaitTermination()
