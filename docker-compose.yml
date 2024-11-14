@@ -95,7 +95,7 @@ services:
 
   spark-consumer:
     build:
-      context: ./Src
+      context: ./Src/sparkworker
     container_name: spark-consumer
     depends_on:
       - kafka
