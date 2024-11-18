@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   namenode:
@@ -37,7 +37,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-    - ../storage/hadoop/datanode-1:/hadoop/dfs/data
+      - ../storage/hadoop/datanode-1:/hadoop/dfs/data
     networks:
       - es-net
 
@@ -122,11 +122,17 @@ services:
     networks:
       - es-net
     healthcheck:
-      test: ["CMD", "kafka-topics.sh", "--bootstrap-server=localhost:9092", "--list"]
+      test:
+        [
+          "CMD",
+          "kafka-topics.sh",
+          "--bootstrap-server=localhost:9092",
+          "--list",
+        ]
       start_period: 15s
       interval: 10s
 
-  init-kafka:
+  init-kafka-stock-data:
     image: bitnami/kafka:latest
     working_dir: /opt/bitnami/kafka/bin
     entrypoint: /bin/bash
@@ -138,6 +144,18 @@ services:
     networks:
       - es-net
 
+  init-kafka-merge-command:
+    image: bitnami/kafka:latest
+    working_dir: /opt/bitnami/kafka/bin
+    entrypoint: /bin/bash
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: |
+      kafka-topics.sh --create --if-not-exists --topic merge-commands --replication-factor=1 --partitions=3 --bootstrap-server kafka:9092
+    networks:
+      - es-net
+
   # zookeeper:
   #   image: bitnami/zookeeper:latest
   #   ports:
@@ -146,6 +164,52 @@ services:
   #     - ALLOW_ANONYMOUS_LOGIN=yes
   #   networks:
   #     - es-net
+
+  elasticsearch:
+    image: elasticsearch:8.16.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.security.audit.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./storage/elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - es-net
+
+  kibana:
+    image: kibana:8.16.0
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - es-net
+
+  spark-elasticsearch:
+    build:
+      context: ./Src/elasticsearchworker
+    container_name: spark-elasticsearch
+    depends_on:
+      - kafka
+      - elasticsearch
+      - spark-master
+      - kibana
+      - namenode
+      - datanode-1
+    networks:
+      - es-net
 
 networks:
   es-net:

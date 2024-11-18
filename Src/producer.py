@@ -26,7 +26,7 @@ with open(os.path.join(os.path.dirname(__file__), "AAPL_stock_data.json"), "r") 
 for record in data:
     # Convert each record to a JSON string
     message = json.dumps(record)
-    producer.produce('test-topic', message.encode('utf-8'), callback=delivery_report)
+    producer.produce('stock-data', message.encode('utf-8'), callback=delivery_report)
 
 # Wait for all messages to be delivered
 producer.flush()
