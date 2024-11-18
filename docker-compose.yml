@@ -132,7 +132,7 @@ services:
       start_period: 15s
       interval: 10s
 
-  init-kafka:
+  init-kafka-stock-data:
     image: bitnami/kafka:latest
     working_dir: /opt/bitnami/kafka/bin
     entrypoint: /bin/bash
@@ -141,6 +141,18 @@ services:
         condition: service_healthy
     command: |
       kafka-topics.sh --create --if-not-exists --topic stock-data --replication-factor=1 --partitions=3 --bootstrap-server kafka:9092
+    networks:
+      - es-net
+
+  init-kafka-merge-command:
+    image: bitnami/kafka:latest
+    working_dir: /opt/bitnami/kafka/bin
+    entrypoint: /bin/bash
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: |
+      kafka-topics.sh --create --if-not-exists --topic merge-commands --replication-factor=1 --partitions=3 --bootstrap-server kafka:9092
     networks:
       - es-net
 
@@ -182,6 +194,20 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - "5601:5601"
+    networks:
+      - es-net
+
+  spark-elasticsearch:
+    build:
+      context: ./Src/elasticsearchworker
+    container_name: spark-elasticsearch
+    depends_on:
+      - kafka
+      - elasticsearch
+      - spark-master
+      - kibana
+      - namenode
+      - datanode-1
     networks:
       - es-net
 

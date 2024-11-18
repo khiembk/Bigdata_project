@@ -17,13 +17,13 @@ RUN mkdir -p ${SPARK_JARS_DIR} \
     && curl -L -o ${SPARK_JARS_DIR}/elasticsearch-hadoop.jar \
        https://repo1.maven.org/maven2/org/elasticsearch/elasticsearch-hadoop/8.16.0/elasticsearch-hadoop-8.16.0.jar
 
-COPY consumer.py /app/importdata.py
+COPY importdata.py /app/importdata.py
 
 # Set the working directory
 WORKDIR /app
 
 # Command to run your consumer
-CMD ["spark-submit", 
-     "--master", "spark://spark-master:7077", 
-     "--jars", "/spark/jars/elasticsearch-hadoop.jar", 
-     "/app/importdata.py"]
+CMD spark-submit \
+    --master spark://spark-master:7077 \
+    --jars /spark/jars/elasticsearch-hadoop.jar \
+    /app/importdata.py

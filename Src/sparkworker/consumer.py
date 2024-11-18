@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import current_date, date_format, from_json, col
+from pyspark.sql.functions import to_date, date_format, from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 
 # Define Spark session
@@ -27,11 +27,17 @@ kafka_df = spark.readStream \
     .option("subscribe", "stock-data") \
     .load()
     
+# Parse the Kafka value column using the schema
+parsed_df = kafka_df.selectExpr("CAST(value AS STRING) as json_value") \
+    .select(from_json(col("json_value"), stock_data_schema).alias("data")) \
+    .select("data.*")  # Flatten the JSON structure into columns
+    
 # Add a date column to partition by
-kafka_df = kafka_df.withColumn("date", date_format(current_date(), "yyyy/MM/dd"))
-query = kafka_df.selectExpr("CAST(value AS STRING)").writeStream \
+parsed_df = parsed_df.withColumn("date", date_format(to_date(col("Date"), "yyyy-MM-dd"), "yyyy/MM/dd"))
+
+query = parsed_df.writeStream \
     .outputMode("append") \
-    .format("text") \
+    .format("parquet") \
     .option("path", "hdfs://namenode:9000/stock_data") \
     .option("checkpointLocation", "/tmp/spark_checkpoint") \
     .partitionBy("date") \
@@ -59,7 +65,7 @@ kafka_df_command = spark.readStream \
     .option("subscribe", "merge-commands") \
     .load()
 
-parsed_df_command = kafka_df.selectExpr("CAST(value AS STRING) as json_value") \
+parsed_df_command = kafka_df_command.selectExpr("CAST(value AS STRING) as json_value") \
     .select(from_json(col("json_value"), command_schema).alias("data")) \
     .select("data.command", "data.date")
 
