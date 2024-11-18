@@ -17,8 +17,7 @@ RUN mkdir -p ${SPARK_JARS_DIR} \
     && curl -L -o ${SPARK_JARS_DIR}/elasticsearch-hadoop.jar \
        https://repo1.maven.org/maven2/org/elasticsearch/elasticsearch-hadoop/8.16.0/elasticsearch-hadoop-8.16.0.jar
 
-# Copy your consumer script into the container
-COPY consumer.py /app/consumer.py
+COPY consumer.py /app/importdata.py
 
 # Set the working directory
 WORKDIR /app
