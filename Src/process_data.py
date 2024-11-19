@@ -164,12 +164,18 @@ if __name__ == "__main__":
     output_path = "hdfs://namenode:9000/user/hadoop/output/AAPL_stock_analysis.json"
     if len(sys.argv) > 1:
         output_path = "hdfs://namenode:9000/user/hadoop/output/{}_stock_analysis.json".format(sys.argv[1])
-        
+
+    output_path2 = output_path.replace("analysis", "analysis_table")
     # Lưu kết quả phân tích ra file JSON
     analysis_results_df = spark.createDataFrame([(analysis_results,)], ['Analysis'])
     analysis_results_df.write.mode("overwrite").option("encoding", "UTF-8").json(output_path)
     
-    print("Kết quả phân tích được lưu vào file: {}".format(output_path))
+    newdf = df.drop('Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits')
+    
+    newdf.write.mode("overwrite").option("encoding", "UTF-8").json(output_path2)
+
+    
+    print("Kết quả phân tích được lưu vào file: {} và {}".format(output_path, output_path2))
     
     # Đóng Spark session
     spark.stop()
