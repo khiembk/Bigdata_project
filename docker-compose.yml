@@ -95,7 +95,7 @@ services:
 
   spark-consumer:
     build:
-      context: ./Src
+      context: ./Src/sparkworker
     container_name: spark-consumer
     depends_on:
       - kafka
@@ -166,7 +166,7 @@ services:
   #     - es-net
 
   elasticsearch:
-    image: elasticsearch:7.17.13
+    image: elasticsearch:8.16.0
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -186,7 +186,7 @@ services:
       - es-net
 
   kibana:
-    image: kibana:7.17.13
+    image: kibana:8.16.0
     container_name: kibana
     depends_on:
       - elasticsearch
@@ -194,6 +194,20 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - "5601:5601"
+    networks:
+      - es-net
+
+  spark-elasticsearch:
+    build:
+      context: ./Src/elasticsearchworker
+    container_name: spark-elasticsearch
+    depends_on:
+      - kafka
+      - elasticsearch
+      - spark-master
+      - kibana
+      - namenode
+      - datanode-1
     networks:
       - es-net
 
