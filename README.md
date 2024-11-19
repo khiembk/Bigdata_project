@@ -9,3 +9,6 @@ docker-compose up --build -d
 - Mặc định data được lấy xử lý được lưu ở hdfs://namenode:9000/user/hadoop/{Tên_cổ_phiếu}_stock_data.json
 - Dữ liệu tổng kết phân tích xử lý xong được lưu ở hdfs://namenode:9000/user/hadoop/output/{Tên_cổ_phiếu}_stock_analysis.json
 - Dữ liệu phân tích theo từng ngày được lưu ở hdfs://namenode:9000/user/hadoop/output/{Tên_cổ_phiếu}_stock_analysis_table.json
+
+Thêm dữ liệu vào elastic search
+./spark/bin/spark-submit --master spark://master:7077 --jars app/elasticsearch-spark-30_2.12-7.17.13.jar --driver-class-path app/elasticsearch-spark-30_2.12-7.17.13.jar app/importdata.py
