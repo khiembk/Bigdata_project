@@ -12,7 +12,7 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # Read data from HDFS
-hdfs_path = "hdfs://namenode:9000/stock_data_done/"
+hdfs_path = "hdfs://namenode:9000/stock_data_done/*/*/*"
 
 schema = StructType([
     StructField("Ticker", StringType(), True),
@@ -26,6 +26,7 @@ schema = StructType([
     StructField("Stock Splits", DoubleType(), True),
 ])
 stock_data = spark.read.schema(schema).json(hdfs_path)
+stock_data.show()
 
 # Transform data if needed (e.g., rename fields for Elasticsearch compatibility)
 transformed_data = stock_data.select(
