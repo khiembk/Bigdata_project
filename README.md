@@ -13,3 +13,7 @@ docker-compose up --build -d
 ## Thêm dữ liệu vào elastic search
 - cd /
 - ./spark/bin/spark-submit --master spark://spark-master:7077 --jars app/elasticsearch-spark-30_2.12-7.17.13.jar --driver-class-path app/elasticsearch-spark-30_2.12-7.17.13.jar app/importdata.py
+
+## Các trang
+- Kibana: localhost:5601
+- Hadoop: localhost:9870
