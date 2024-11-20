@@ -26,9 +26,11 @@ end_date = datetime.strptime("2024-10-19", "%Y-%m-%d")
 
 # Sample data (replace this with your actual data)
 data = [
-    {"command": "merge", "date": "2023-10-19"},
-    {"command": "merge", "date": "2023-10-20"},
-    {"command": "merge", "date": "2023-10-21"},
+    {"command": "merge", "date": "2024-10-11"},
+    {"command": "merge", "date": "2024-10-12"},
+    {"command": "merge", "date": "2024-10-13"},
+    {"command": "merge", "date": "2024-10-14"},
+    {"command": "merge", "date": "2024-10-15"},
 ]
 
 # Produce JSON message

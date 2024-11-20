@@ -5,7 +5,7 @@ from pyspark.sql.types import StructType, StructField, StringType, DoubleType\
 # Define Spark session with Elasticsearch configuration
 spark = SparkSession.builder \
     .appName("HadoopToElasticSearch") \
-    .master("spark://172.19.0.10:7077") \
+    .master("spark://spark-master:7077") \
     .config("spark.es.nodes", "elasticsearch") \
     .config("spark.es.port", "9200") \
     .config("spark.es.resource", "stock-index/_doc") \
