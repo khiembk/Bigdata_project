@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 import json
 import sys
+from pyspark.sql.functions import mean, stddev, corr, max, min, sum
 
 def create_spark_session():
     """Khởi tạo Spark Session"""
@@ -37,6 +37,32 @@ def calculate_basic_stats(df):
         sum('Volume').alias('total_volume')
     )
     return stats
+
+def calculate_advance_stats(df):
+    
+    stats = df.agg(
+        # Basic stats
+        stddev('Close').alias('std_close'),
+        mean('High').alias('avg_high'),
+        stddev('High').alias('std_high'),
+        mean('Low').alias('avg_low'),
+        stddev('Low').alias('std_low'),
+        mean('Open').alias('avg_open'),
+        stddev('Open').alias('std_open'),
+       
+    )
+    
+    # Pairwise correlation (open-close, high-low, etc.)
+    correlations = {
+        "open_close_corr": df.corr("Open", "Close"),
+        "high_low_corr": df.corr("High", "Low"),
+        "open_high_corr": df.corr("Open", "High"),
+        "open_low_corr": df.corr("Open", "Low"),
+        "close_high_corr": df.corr("Close", "High"),
+        "close_low_corr": df.corr("Close", "Low"),
+    }
+    
+    return stats.collect(), correlations
 
 def calculate_daily_returns(df):
     """Tính toán tỷ lệ thay đổi giá hàng ngày"""
@@ -103,7 +129,7 @@ def analyze_stock_data(spark, df):
     
     # Tính toán thống kê cơ bản
     basic_stats = calculate_basic_stats(df)
-    
+    advance_stats, corelated = calculate_advance_stats(df)
     # Lấy các chỉ số mới nhất
     latest_data = df.orderBy(desc('Date')).first()
     
@@ -148,7 +174,7 @@ if __name__ == "__main__":
     schema = create_schema()
     
     file_path = "hdfs://namenode:9000/user/hadoop/AAPL_stock_data.json"
-    print("Đọc dữ liệu từ file: {}".format(file_path))
+    print("Read data f file: {}".format(file_path))
     if len(sys.argv) > 1:
         file_path = "hdfs://namenode:9000/user/hadoop/{}_stock_data.json".format(sys.argv[1])
     data = spark.read.option("multiline", "true").schema(schema).json(file_path)
