@@ -14,8 +14,7 @@
 - Dữ liệu phân tích theo từng ngày được lưu ở hdfs://namenode:9000/user/hadoop/output/{Tên_cổ_phiếu}_stock_analysis_table.json
 
 ## Thêm dữ liệu vào elastic search (*)
-- cd /
-- ./spark/bin/spark-submit --master spark://spark-master:7077 --jars app/elasticsearch-spark-30_2.12-7.17.13.jar --driver-class-path app/elasticsearch-spark-30_2.12-7.17.13.jar app/importdata.py
+- docker exec -it spark-consumer bash -c "cd / && ./spark/bin/spark-submit --master spark://spark-master:7077 --jars app/elasticsearch-spark-30_2.12-7.17.13.jar --driver-class-path app/elasticsearch-spark-30_2.12-7.17.13.jar app/importdata.py"
 
 ## Các trang
 - Kibana: localhost:5601
