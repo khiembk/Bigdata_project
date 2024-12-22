@@ -19,3 +19,10 @@
 ## Các trang
 - Kibana: localhost:5601
 - Hadoop: localhost:9870
+
+### DEMO 
+Step 1: Produce data: python3 producer.py 
+Step 2: Merge data: python3 merge.py 
+Step 3: Add data to elastic search: docker exec -it spark-consumer bash -c "cd / && ./spark/bin/spark-submit --master spark://spark-master:7077 --jars app/elasticsearch-spark-30_2.12-7.17.13.jar --driver-class-path app/elasticsearch-spark-30_2.12-7.17.13.jar app/importdata.py"
+
+      
